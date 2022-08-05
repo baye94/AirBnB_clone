@@ -27,7 +27,7 @@ the other projects including but not limited to the following:
 
 Clone the repository with the following command
 
-    git clone https://github.com/kimengu-david/AirBnB_clone.git
+    git clone https://github.com/baye94/AirBnB_clone.git
     
 After cloning the repository Navigate to the "AirBnB" repository
 
@@ -180,3 +180,4 @@ time.datetime(2019, 2, 17, 21, 54, 39, 234382), 'id': '6f348019-0499-420f-8eec-
 ef0fdc863c02'}
 (hbnb)
 ```
+
