@@ -1,8 +1,3 @@
-<h1 align="center">HolbertonBnB</h1>
-<p align="center">
-   <img src="https://davikani.s3.eu-west-3.amazonaws.com/images/holberton/holberton.png">
-</p>
-<p align="center">A clone of AirBnB website.</p>
 
 ### Table of contents.</br>
 * Introduction
@@ -27,7 +22,6 @@ the other projects including but not limited to the following:
 
 Clone the repository with the following command
 
-    git clone https://github.com/baye94/AirBnB_clone.git
     
 After cloning the repository Navigate to the "AirBnB" repository
 
