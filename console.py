@@ -18,15 +18,15 @@ class HBNBCommand(cmd.Cmd):
     prompt = '(hbnb) ' if sys.__stdin__.isatty() else ''
 
     classes = {
-               'BaseModel': BaseModel, 'User': User, 'Place': Place,
-               'State': State, 'City': City, 'Amenity': Amenity,
-               'Review': Review
-              }
+            'BaseModel': BaseModel, 'User': User, 'Place': Place,
+            'State': State, 'City': City, 'Amenity': Amenity,
+            'Review': Review
+            }
     dot_cmds = ['all', 'count', 'show', 'destroy', 'update']
     types = {
-             'number_rooms': int, 'number_bathrooms': int,
-             'max_guest': int, 'price_by_night': int,
-             'latitude': float, 'longitude': float
+            'number_rooms': int, 'number_bathrooms': int,
+            'max_guest': int, 'price_by_night': int,
+            'latitude': float, 'longitude': float
             }
 
     def preloop(self):
@@ -72,7 +72,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
+                    if pline[0] is '{' and pline[-1] is'}' \
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -89,12 +89,11 @@ class HBNBCommand(cmd.Cmd):
         """Prints if isatty is false"""
         if not sys.__stdin__.isatty():
             print('(hbnb) ', end='')
-        return stop
+        return stop   
 
-    
     def do_quit(self, arg):
         """Quit command to exit the program."""
-       exit(0)
+    exit(0)
 
     def help_quit(self):
         """ Help document to quit the program."""
@@ -105,17 +104,16 @@ class HBNBCommand(cmd.Cmd):
         exit(0)
 
     def help_EOF(self):
-        """ Help document to quit the program for EOF."""
-    
+        """ Help document to quit the program for EOF."""    
     def emptyline(self):
-        """ Empty line."""
+
         pass
 
     def handler(signal_received, frame):
         """Handle the SIGINT or CTRL-C signal."""
         print("^C")
         exit(0)
-        """ Overrides the emptyline method of CMD """
+
         pass
 
     def do_create(self, args):
@@ -323,6 +321,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
