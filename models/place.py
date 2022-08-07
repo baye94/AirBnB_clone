@@ -1,10 +1,16 @@
-#!/usr/bin/python
-""" holds class Place"""
+#!/usr/bin/python3
+import uuid
+from datetime import datetime
+from models import storage
 from models.base_model import BaseModel
 
 
+'Module for Place'
+
+
 class Place(BaseModel):
-    """Representation of Place """
+    'Place class'
+
     city_id = ""
     user_id = ""
     name = ""
@@ -18,5 +24,8 @@ class Place(BaseModel):
     amenity_ids = []
 
     def __init__(self, *args, **kwargs):
-        """initializes Place"""
-        super().__init__(*args, **kwargs)
+        '__init__ method for place'
+        if len(kwargs) > 0:
+            self.__dict__ = kwargs
+        else:
+            super().__init__(self)
