@@ -1,6 +1,11 @@
 #!/usr/bin/python3
 """ console """
 
+import re
+import sys
+import json
+from models.base_model import BaseModel
+from models.engine.file_storage import FileStorage
 import cmd
 from datetime import datetime
 import models
