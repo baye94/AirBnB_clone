@@ -1,14 +1,12 @@
-#!/usr/bin/python3
-"""module of 'Amenity' class"""
-
+#!/usr/bin/python
+""" holds class Amenity"""
 from models.base_model import BaseModel
 
 
 class Amenity(BaseModel):
-    """class 'Amenity' that inherits from BaseModel"""
-
+    """Representation of Amenity """
     name = ""
 
     def __init__(self, *args, **kwargs):
-        """class constructor"""
+        """initializes Amenity"""
         super().__init__(*args, **kwargs)
