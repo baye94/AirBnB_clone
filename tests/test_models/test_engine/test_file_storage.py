@@ -1,112 +1,108 @@
 #!/usr/bin/python3
-"""
-Contains the TestFileStorageDocs classes
-"""
-
-from datetime import datetime
-import inspect
-from models.engine import file_storage
-from models.amenity import Amenity
-from models.base_model import BaseModel
-from models.city import City
-from models.place import Place
-from models.review import Review
-from models.state import State
-from models.user import User
+''' module for file_storage tests '''
+from unittest import TestCase
 import json
+import re
+from uuid import UUID, uuid4
+from datetime import datetime
+from time import sleep
 import os
-import pep8
-import unittest
-FileStorage = file_storage.FileStorage
-classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
-           "Place": Place, "Review": Review, "State": State, "User": User}
+
+from models import storage, BaseModel, FileStorage
 
 
-class TestFileStorageDocs(unittest.TestCase):
-    """Tests to check the documentation and style of FileStorage class"""
-    @classmethod
-    def setUpClass(cls):
-        """Set up for the doc tests"""
-        cls.fs_f = inspect.getmembers(FileStorage, inspect.isfunction)
+class TestFileStorage(TestCase):
+    ''' tests FileStorage class '''
+    def test_5(self):
+        ''' tests task 4 '''
+        FS_dict = FileStorage.__dict__
+        FS__path = '_FileStorage__file_path'
+        FS__objs = '_FileStorage__objects'
+        FS_path = FS_dict[FS__path]
+        FS_objs = FS_dict[FS__objs]
 
-    def test_pep8_conformance_file_storage(self):
-        """Test that models/engine/file_storage.py conforms to PEP8."""
-        pep8s = pep8.StyleGuide(quiet=True)
-        result = pep8s.check_files(['models/engine/file_storage.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
+        # valid types
+        self.assertTrue(type(FS_path) is str and FS_path)
+        self.assertTrue(type(FS_objs) is dict)
 
-    def test_pep8_conformance_test_file_storage(self):
-        """Test tests/test_models/test_file_storage.py conforms to PEP8."""
-        pep8s = pep8.StyleGuide(quiet=True)
-        result = pep8s.check_files(['tests/test_models/test_engine/\
-test_file_storage.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
+        # same object returned
+        self.assertTrue(getattr(storage, FS__path))
+        self.assertTrue(getattr(storage, FS__objs) is storage.all())
 
-    def test_file_storage_module_docstring(self):
-        """Test for the file_storage.py module docstring"""
-        self.assertIsNot(file_storage.__doc__, None,
-                         "file_storage.py needs a docstring")
-        self.assertTrue(len(file_storage.__doc__) >= 1,
-                        "file_storage.py needs a docstring")
+        FS_objs.clear()
 
-    def test_file_storage_class_docstring(self):
-        """Test for the FileStorage class docstring"""
-        self.assertIsNot(FileStorage.__doc__, None,
-                         "State class needs a docstring")
-        self.assertTrue(len(FileStorage.__doc__) >= 1,
-                        "State class needs a docstring")
+        # object registration and persistent __objects dict
+        oobjs = storage.all()
+        oobjs_cp = oobjs.copy()
+        obj = BaseModel()
+        storage.new(obj)
+        self.assertTrue(oobjs is storage.all())
+        self.assertEqual(len(oobjs.keys()), 1)
+        self.assertTrue(set(storage.all().keys())
+                        .difference(set(oobjs_cp.keys())) ==
+                        {'BaseModel.{}'.format(obj.id)})
 
-    def test_fs_func_docstrings(self):
-        """Test for the presence of docstrings in FileStorage methods"""
-        for func in self.fs_f:
-            self.assertIsNot(func[1].__doc__, None,
-                             "{:s} method needs a docstring".format(func[0]))
-            self.assertTrue(len(func[1].__doc__) >= 1,
-                            "{:s} method needs a docstring".format(func[0]))
+        oobjs_cp = oobjs.copy()
+        # storage.new(obj)
+        self.assertTrue(oobjs is storage.all())
+        self.assertEqual(oobjs, oobjs_cp)
 
+        obj = BaseModel()
+        storage.new(obj)
+        self.assertEqual(len(oobjs.keys()), 2)
 
-class TestFileStorage(unittest.TestCase):
-    """Test the FileStorage class"""
-    def test_all_returns_dict(self):
-        """Test that all returns the FileStorage.__objects attr"""
-        storage = FileStorage()
-        new_dict = storage.all()
-        self.assertEqual(type(new_dict), dict)
-        self.assertIs(new_dict, storage._FileStorage__objects)
-
-    def test_new(self):
-        """test that new adds an object to the FileStorage.__objects attr"""
-        storage = FileStorage()
-        save = FileStorage._FileStorage__objects
-        FileStorage._FileStorage__objects = {}
-        test_dict = {}
-        for key, value in classes.items():
-            with self.subTest(key=key, value=value):
-                instance = value()
-                instance_key = instance.__class__.__name__ + "." + instance.id
-                storage.new(instance)
-                test_dict[instance_key] = instance
-                self.assertEqual(test_dict, storage._FileStorage__objects)
-        FileStorage._FileStorage__objects = save
-
-    def test_save(self):
-        """Test that save properly saves objects to file.json"""
-        os.remove("file.json")
-        storage = FileStorage()
-        new_dict = {}
-        for key, value in classes.items():
-            instance = value()
-            instance_key = instance.__class__.__name__ + "." + instance.id
-            new_dict[instance_key] = instance
-        save = FileStorage._FileStorage__objects
-        FileStorage._FileStorage__objects = new_dict
+        # check serialization
+        oobjs_cp = oobjs.copy()
         storage.save()
-        FileStorage._FileStorage__objects = save
-        for key, value in new_dict.items():
-            new_dict[key] = value.to_dict()
-        string = json.dumps(new_dict)
-        with open("file.json", "r") as f:
-            js = f.read()
-        self.assertEqual(json.loads(string), json.loads(js))
+        self.assertTrue(os.path.isfile(FS_path))
+        with open(FS_path, 'r') as file:
+            js_objs = json.load(file)
+            self.assertTrue(type(js_objs) is dict)
+            self.assertEqual(len(js_objs.keys()), 2)
+            self.assertTrue(all(v in oobjs.keys() for v in js_objs.keys()))
+        storage.all().clear()
+        storage.reload()
+
+        # check deserialization
+        for k, v in oobjs_cp.items():
+            oobjs_cp[k] = v.to_dict()
+        oobjs_cp2 = storage.all().copy()
+        for k, v in oobjs_cp2.items():
+            oobjs_cp2[k] = v.to_dict()
+        self.assertEqual(oobjs_cp, oobjs_cp2)
+
+        # ### check no deserialization for absent file
+        oobjs_cp = storage.all().copy()
+        os.remove(FS_path)
+        storage.reload()
+        self.assertEqual(oobjs_cp, storage.all())
+
+        # automatic registration for instances created with no args
+        obj = BaseModel()
+        kid = 'BaseModel.{}'.format(obj.id)
+        self.assertTrue(kid in storage.all() and storage.all()[kid] is obj)
+        sleep(.01)
+        now = datetime.utcnow()
+        obj.updated_at = now
+        obj.save()
+        storage.all().clear()
+        storage.reload()
+        oobjs = storage.all()
+        storage.reload()  # insignificant reload
+        oobjs2 = storage.all()
+
+        # same deserialization
+        self.assertEqual(obj.to_dict(), storage.all()[kid].to_dict())
+        self.assertFalse(obj is storage.all()[kid].to_dict())
+
+        # args should not be counted towards manual instantiation
+        obj = BaseModel(1, 2, 3)
+        kid = 'BaseModel.{}'.format(obj.id)
+        self.assertTrue(kid in storage.all() and storage.all()[kid] is obj)
+
+        # instances constructed with kwargs are not registered
+        obj = BaseModel(id=str(uuid4()), created_at=now.isoformat(),
+                        updated_at=now.isoformat())
+        kid = 'BaseModel.{}'.format(obj.id)
+        self.assertFalse(kid in storage.all())
+        self.assertFalse(obj in storage.all().values())
