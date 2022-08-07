@@ -1,43 +1,44 @@
 #!/usr/bin/python3
-import uuid
+'''Base Model Module'''
+
+import models
+from uuid import uuid4
 from datetime import datetime
-from models import storage
-
-'Module for BaseModel'
-
-format = "%Y-%m-%dT%H:%M:%S.%f"
 
 
 class BaseModel:
-    'BaseModel class'
-    def __init__(self, *args, **kwargs):
-        'initialize data'
-        if len(kwargs) is not 0:
-            self.__dict__ = kwargs
-            self.created_at = datetime.strptime(kwargs.get("created_at"),
-                                                format)
-        else:
-            self.id = str(uuid.uuid1())
-            self.created_at = datetime.now()
-            storage.new(self)
+    """Class Base Model"""
 
-    def save(self):
-        'save method'
-        self.updated_at = datetime.now()
-        storage.save()
+    def __init__(self, *args, **kwargs):
+        """Constructor"""
+        datenow = datetime.now()
+        if kwargs:
+            for k, v in kwargs.items():
+                if k == '__class__':
+                    continue
+                if k in ['created_at', 'updated_at']:
+                    v = datetime.strptime(v, "%Y-%m-%dT%H:%M:%S.%f")
+                self.__setattr__(k, v)
+        else:
+            self.id = str(uuid4())
+            self.created_at = datenow
+            self.updated_at = datenow
+            models.storage.new(self)
 
     def __str__(self):
-        'str method'
-        return ("[{}] ({}) {}".format(self.__class__.__name__,
-                                      self.id, self.__dict__))
+        """String representation"""
+        return "[{}] ({}) {}".format(self.__class__.__name__, self.id,
+                                     self.__dict__)
 
-    def to_json(self):
-        'to json method'
-        new_dict = self.__dict__.copy()
-        for key, value in new_dict.items():
-            if isinstance(value, (datetime, uuid.UUID, tuple, set)):
-                if type(value) is datetime:
-                    value = value.isoformat()
-                new_dict.update({key: str(value)})
-        new_dict['__class__'] = str(self.__class__.__name__)
-        return new_dict
+    def save(self):
+        """Updates the updated_at public instance attribute"""
+        self.updated_at = datetime.now()
+        models.storage.save()
+
+    def to_dict(self):
+        """Convert object to dictionary representation"""
+        dct = self.__dict__.copy()
+        dct['__class__'] = self.__class__.__name__
+        dct['created_at'] = self.created_at.isoformat()
+        dct['updated_at'] = self.updated_at.isoformat()
+        return dct
