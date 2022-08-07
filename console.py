@@ -92,7 +92,7 @@ class HBNBCommand(cmd.Cmd):
                 args[3] = args[3].strip('"')
                 try:
                     args[3] = int(args[3])
-                except:
+                except User.DoesNotExist:
                     pass
                 setattr(v, args[2], args[3])
                 storage.save()
@@ -121,6 +121,7 @@ class HBNBCommand(cmd.Cmd):
     def emptyline(self):
         'emptyline method - does nothing'
         pass
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
