@@ -106,7 +106,7 @@ class HBNBCommand(cmd.Cmd):
     def help_EOF(self):
         """ Help document to quit the program for EOF."""    
     def emptyline(self):
-
+  
         pass
 
     def handler(signal_received, frame):
@@ -115,7 +115,6 @@ class HBNBCommand(cmd.Cmd):
         exit(0)
 
         pass
-
     def do_create(self, args):
         """ Create an object of any class"""
         if not args:
@@ -321,7 +320,6 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
-
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
