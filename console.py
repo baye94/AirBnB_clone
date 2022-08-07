@@ -131,14 +131,13 @@ class HBNBCommand(cmd.Cmd):
                 obj.updated_at = updatetime
                 models.storage.save()
 
-    def do_quit(self, arg):
-        """Quit command to exit the program
-        """
+    def do_quit(self, line):
+        """Quit command to exit the program"""
         return True
 
-    def do_EOF(self, arg):
-        """EOF to exit the program
-        """
+    def do_EOF(self, line):
+        """Quit command to exit the program at end of file"""
+        print()
         return True
 
     def default(self, line):
