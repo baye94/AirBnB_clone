@@ -1,177 +1,50 @@
+# AirBnB Clone
+So this project is the first step towards building a first full web application (which is an AirBnB clone). This first step consists of a custom command-line interface for data management, and the base classes for the storage of this data.
 
-### Table of contents.</br>
-* Introduction
-* Installation
-* Usage
-* AUTHORS
-
-## Introduction
-
-This project is a full clone of the AirBnB website. It is still in progress
-and at this first stage the main console has been developed. This first step is
-very important because what is built during this stage will be the basis of all
-the other projects including but not limited to the following:
-
-* **HTML/CSS templating**
-* **database storage**
-* **API**
-* **front-end integration**
-
-## Installation
+## Step 1: Write a command interpreter (Console)
 
 
-Clone the repository with the following command
+## Models
 
-    
-After cloning the repository Navigate to the "AirBnB" repository
+The folder [models](./models/) contains all the classes used in this project.
 
-    cd AirBnB
-    
+- a unique id generated using ```uuid``` package
+- the attribute ```created_at```, a ```datetime``` object, indicating when the object is created
+- the attribute ```updated_at```, a ```datetime``` object, indicating when the object is last updated
+- the attribute ```__class__```, a ```str``` object, indicating what is the object's type (model)
 
-## Usage
+File | Description | Attributes
+---- | ----------- | ----------
+[base_model.py](./models/base_model.py) | BaseModel class for all the other classes | id, created_at, updated_at
+[user.py](./models/user.py) | User class for future user information | email, password, first_name, last_name
+[amenity.py](./models/amenity.py) | Amenity class for future amenity information | name
+[city.py](./models/city.py) | City class for future location information | state_id, name
+[state.py](./models/state.py) | State class for future location information | name
+[place.py](./models/place.py) | Place class for future accomodation information | city_id, user_id, name, description, number_rooms, number_bathrooms, max_guest, price_by_night, latitude, longitude, amenity_ids
+[review.py](./models/review.py) | Review class for future user/host review information | place_id, user_id, text
 
-### Interactive mode
-To enter the interactive mode execute the following command  "./console"
+## File storage
 
-    ./console
-    (hbnb)
+The folder [engine](./models/engine/) manages the serialization and deserialization of all the data, following a JSON format.
 
-### Non interactive mode
+A FileStorage class is defined in [file_storage.py](./models/engine/file_storage.py) with methods to follow this flow:
+```<object> -> to_dict() -> <dictionary> -> JSON dump -> <json string> -> FILE -> <json string> -> JSON load -> <dictionary> -> <object>```
 
-To use the non-interactive You must use the echo command and pipe a string to  (./console).
+The [__init__.py](./models/__init__.py) file contains the instantiation of the FileStorage class called **storage**, followed by a call to the method reload() on that instance.
+This allows the storage to be reloaded automatically at initialization, which recovers the serialized data.
 
-    echo "create BaseModel" | ./console
-    (hbnb) ebe5d7db-fa0d-49d8-b66b-92c3b964ddbc
-    (hbnb)
 
-#### Console Commands
 
-The following commands are supported:
 
-#### create
-* Usage: `create <class name>`
+## Resources
+- [cmd module](https://docs.python.org/3.8/library/cmd.html)
+- [packages concept page](https://alx-intranet.hbtn.io/concepts/74)
+- [uuid module](https://docs.python.org/3.8/library/uuid.html)
+- [datetime](https://docs.python.org/3.8/library/datetime.html)
+- [unittest module](https://docs.python.org/3.8/library/unittest.html#module-unittest)
+- [args/kwargs](https://yasoob.me/2013/08/04/args-and-kwargs-in-python-explained/)
+- [Python test cheatsheet](https://www.pythonsheets.com/notes/python-tests.html)
 
-Creates a new instance of a given class. The class' ID is printed and
-the instance is saved to the file `file.json`.
-
-```
-$ ./console.py
-(hbnb) create BaseModel
-119be863-6fe5-437e-a180-b9892e8746b8
-(hbnb)
-(hbnb) create BaseModel
-(hbnb) quit
-$ cat file.json ; echo ""
-{"BaseModel.119be863-6fe5-437e-a180-b9892e8746b8": {"updated_at": "2019-02-17T2
-1:30:42.215277", "created_at": "2019-02-17T21:30:42.215277", "__class__": "Base
-Model", "id": "119be863-6fe5-437e-a180-b9892e8746b8"}, {'id': 'd80e0344-63eb-43
-4a-b1e0-07783522124e', 'created_at': datetime.datetime(2017, 11, 10, 4, 41, 7, 
-842160), 'updated_at': datetime.datetime(2017, 11, 10, 4, 41, 7, 842235), 'name
-': 'BaseModel'}}
-```
-
-#### show
-* Usage: `show <class> <id>` or `<class>.show(<id>)`
-
-Prints the string representation of a class instance
-
-```
-$ ./console.py
-(hbnb) create User
-1527b643-e143-47b2-bc37-ad44152e0ff7
-(hbnb)
-(hbnb) show User 1527b643-e143-47b2-bc37-ad44152e0ff7
-[User] (1527b643-e143-47b2-bc37-ad44152e0ff7) {'id': '1527b643-e143-47b2-bc37-ad44152e0ff7
-', 'created_at': datetime.datetime(2019, 2, 17, 21, 34, 3, 635828), 
-'updated_at': datetime.datetime(2019, 2, 17, 21, 34, 3, 635828)}
-(hbnb)
-(hbnb) User.show(1527b643-e143-47b2-bc37-ad44152e0ff7)
-[User] (1e32232d-5a63-4d92-8092-ac3240b29f46) {'id': '1e32232d-5a63-4d92-8092-a
-c3240b29f46', 'created_at': datetime.datetime(2019, 2, 17, 21, 34, 3, 635828), 
-'updated_at': datetime.datetime(2019, 2, 17, 21, 34, 3, 635828)}
-(hbnb)
-```
-
-#### destroy
-* Usage: `destroy <class> <id>` or `<class>.destroy(<id>)`
-
-Deletes a class instance based on a given id.
-
-```
-$ ./console.py
-(hbnb) create User
-d2d789cd-7427-4920-aaae-88cbcf8bffe2
-(hbnb) create Place
-1527b643-e143-47b2-bc37-ad44152e0ff7
-(hbnb)
-(hbnb) destroy Place 1527b643-e143-47b2-bc37-ad44152e0ff7
-(hbnb) quit
-$ cat file.json ; echo ""
-{}
-```
-
-#### all
-* Usage: `all` or `all <class>`
-
-Prints the string representations of all instances of a given class. If no
-class name is provided, the command prints all instances of every class.
-
-```
-$ ./console.py
-(hbnb) create BaseModel
-a1d10dea-8e26-474f-9787-96d76d23e3ed
-(hbnb) create BaseModel
-3ec3423e-03e9-4f5f-8113-4e74995ab5eb
-(hbnb) create User
-f32beb2e-e937-4dae-b6bb-446c0b5ccb80
-(hbnb)
-(hbnb) all BaseModel
-["[BaseModel] (122a1d10dea-8e26-474f-9787-96d76d23e3ed) {'updated_at': datetime.da
-tetime(2019, 2, 17, 21, 45, 5, 963516), 'created_at': datetime.datetime(2019, 2
-, 17, 21, 45, 5, 963516), 'id': '450490fd-344e-47cf-8342-126244c2ba99'}", "[Bas
-eModel] (3ec3423e-03e9-4f5f-8113-4e74995ab5eb) {'updated_at': datetime.datetime
-(2021, 2, 17, 21, 43, 56, 899348), 'created_at': datetime.datetime(2019, 2, 17,
-21, 43, 56, 899348), 'id': 'fce2124c-8537-489b-956e-22da455cbee8'}"]
-(hbnb)
-(hbnb) all User
-["[User] (f32beb2e-e937-4dae-b6bb-446c0b5ccb80) {'updated_at': datetime.datetim
-e(2019, 2, 17, 21, 44, 44, 428413), 'created_at': datetime.datetime(2019, 2, 17
-, 21, 44, 44, 428413), 'id': 'f32beb2e-e937-4dae-b6bb-446c0b5ccb80'}"]
-(hbnb)
-(hbnb) all
-["[User] (8f2d75c8-fb82-48e1-8ae5-2544c909a9fe) {'updated_at': datetime.datetim
-e(2019, 2, 17, 21, 44, 44, 428413), 'created_at': datetime.datetime(2019, 2, 17
-, 21, 44, 44, 428413), 'id': '8f2d75c8-fb82-48e1-8ae5-2544c909a9fe'}", "[BaseMo
-del] (450490fd-344e-47cf-8342-126244c2ba99) {'updated_at': datetime.datetime(20
-19, 2, 17, 21, 45, 5, 963516), 'created_at': datetime.datetime(2019, 2, 17, 21,
-45, 5, 963516), 'id': '450490fd-344e-47cf-8342-126244c2ba99'}", "[User] (b742db
-c3-f4bf-425e-b1d4-165f52c6ff81) {'updated_at': datetime.datetime(2019, 2, 17, 2
-1, 44, 15, 974608), 'created_at': datetime.datetime(2019, 2, 17, 21, 44, 15, 97
-4608), 'id': 'b742dbc3-f4bf-425e-b1d4-165f52c6ff81'}", "[BaseModel] (fce2124c-8
-537-489b-956e-22da455cbee8) {'updated_at': datetime.datetime(2019, 2, 17, 21, 4
-3, 56, 899348), 'created_at': datetime.datetime(2019, 2, 17, 21, 43, 56, 899348
-), 'id': 'fce2124c-8537-489b-956e-22da455cbee8'}"]
-(hbnb)
-```
-#### update
-* Usage: `update <class> <id> <attribute name> "<attribute value>"`
-
-Updates a class instance based on a given id with a given key/value attribute
-pair or dictionary of attribute pairs. If `update` is called with a single
-key/value attribute pair, only "simple" attributes can be updated (ie. not
-`id`, `created_at`, and `updated_at`).
-
-```
-$ ./console.py
-(hbnb) create User
-6f348019-0499-420f-8eec-ef0fdc863c02
-(hbnb)
-(hbnb) update User 6f348019-0499-420f-8eec-ef0fdc863c02 first_name "Holberton" 
-(hbnb) show User 6f348019-0499-420f-8eec-ef0fdc863c02
-[User] (6f348019-0499-420f-8eec-ef0fdc863c02) {'created_at': datetime.datetime(
-2019, 2, 17, 21, 54, 39, 234382), 'first_name': 'Holberton', 'updated_at': date
-time.datetime(2019, 2, 17, 21, 54, 39, 234382), 'id': '6f348019-0499-420f-8eec-
-ef0fdc863c02'}
-(hbnb)
-```
-
+# AUTHOR
+- Norris Selorm Bedzo | bedzon@ieee.org | [GitHub](https://github.com/bedzon94)
+- Rhomeinel Nelson | rhomeinel@gmail.com | [GitHub](https://github.com/rhomeinel)
