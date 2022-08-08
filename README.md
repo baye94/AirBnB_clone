@@ -1,4 +1,4 @@
-# AirBnB Clone
+De# AirBnB Clone
 So this project is the first step towards building a first full web application (which is an AirBnB clone). This first step consists of a custom command-line interface for data management, and the base classes for the storage of this data.
 
 ## Step 1: Write a command interpreter (Console)
@@ -46,5 +46,5 @@ This allows the storage to be reloaded automatically at initialization, which re
 - [Python test cheatsheet](https://www.pythonsheets.com/notes/python-tests.html)
 
 # AUTHOR
-- Norris Selorm Bedzo | bedzon@ieee.org | [GitHub](https://github.com/bedzon94)
-- Rhomeinel Nelson | rhomeinel@gmail.com | [GitHub](https://github.com/rhomeinel)
+- baye cheikh fall | fallcheikh893@gmail.com | [GitHub](https://github.com/baye94)
+
