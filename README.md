@@ -47,4 +47,4 @@ This allows the storage to be reloaded automatically at initialization, which re
 
 # AUTHOR
 - baye cheikh fall | fallcheikh893@gmail.com | [GitHub](https://github.com/baye94)
-- yeo pevrogui noel | yeopevroguinoel@gmail.com | [Github] (https://github.com/yeonoel)
+- yeo pevrogui noel | yeopevroguinoel@gmail.com | [Github](https://github.com/yeonoel)
