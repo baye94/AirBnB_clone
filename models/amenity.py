@@ -1,10 +1,9 @@
 #!/usr/bin/python3
+"""Define Amenity class which inherits the BaseModel class."""
+
 from models.base_model import BaseModel
 
-'''Amenity Class Module'''
-
-
 class Amenity(BaseModel):
-    '''Amenity Class Definition'''
+    '''Representation of Amenity Class Definition.'''
 
     name = ''
